@@ -1,0 +1,58 @@
+name: unifi
+summary: Ubiquiti UniFi Network application
+description: |
+  The Ubiquiti UniFi Network application in a handy snap
+version: # match download
+
+grade: devel
+confinement: strict
+
+base: core20
+
+apps:
+  unifi-service:
+    daemon: simple
+    restart-condition: on-failure
+    plugs:
+      - network
+      - network-bind
+      - network-observe
+    command: bin/start-service.sh
+
+layout:
+  $SNAP/usr/lib/unifi/data:
+    symlink: $SNAP_COMMON/unifi/data
+  $SNAP/usr/lib/unifi/logs:
+    symlink: $SNAP_COMMON/unifi/logs
+  $SNAP/usr/lib/unifi/run:
+    symlink: $SNAP_COMMON/unifi/run
+  $SNAP/usr/lib/unifi/work:
+    symlink: $SNAP_COMMON/unifi/work
+  $SNAP/usr/lib/unifi/bin/mongod:
+    symlink: $SNAP/usr/bin/mongod
+
+parts:
+  mongodb:
+    plugin: nil
+    stage-packages:
+      - mongodb-server-core
+  
+  unifi-deps:
+    plugin: nil
+    stage-packages:
+      - openjdk-8-jre-headless
+      - jsvc
+  
+  unifi:
+    plugin: dump
+    source: ./unifi_sysvinit_all.deb
+    override-build: |
+      echo $PWD
+      cp -r ./usr $SNAPCRAFT_PART_INSTALL/
+      cp -r ./lib $SNAPCRAFT_PART_INSTALL/
+  
+  launchers:
+    plugin: dump
+    source: launchers/
+    organize:
+      '*': bin/
