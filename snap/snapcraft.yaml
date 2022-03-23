@@ -2,7 +2,7 @@ name: unifi
 summary: Ubiquiti UniFi Network application
 description: |
   The Ubiquiti UniFi Network application in a handy snap
-version: # match download
+adopt-info: unifi
 
 grade: devel
 confinement: strict
@@ -46,8 +46,10 @@ parts:
   unifi:
     plugin: dump
     source: ./unifi_sysvinit_all.deb
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version `cat usr/lib/unifi/webapps/ROOT/app-unifi/.version`
     override-build: |
-      echo $PWD
       cp -r ./usr $SNAPCRAFT_PART_INSTALL/
       cp -r ./lib $SNAPCRAFT_PART_INSTALL/
   
