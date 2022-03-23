@@ -10,7 +10,7 @@ confinement: strict
 base: core20
 
 apps:
-  unifi-service:
+  service:
     daemon: simple
     restart-condition: on-failure
     plugs:
